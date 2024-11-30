@@ -23,6 +23,9 @@ final class AerialView: ScreenSaverView, CAAnimationDelegate {
 
     var player: AVPlayer?
     var currentVideo: AerialVideo?
+    var shouldLoopUntil = true
+    var loopDuration = 60.0 // seconds
+    var loopUntil = NSDate()
 
     var preferencesController: PanelWindowController?
 
@@ -194,6 +197,7 @@ final class AerialView: ScreenSaverView, CAAnimationDelegate {
         // ...
         self.originalWidth = 0
         self.originalHeight = 0
+        
 
         super.init(coder: coder)
         self.originalWidth = frame.width
@@ -766,8 +770,17 @@ final class AerialView: ScreenSaverView, CAAnimationDelegate {
             }
         }
     }
-
     
+    func setLoopDeadline() {
+        self.loopUntil = NSDate(timeIntervalSinceNow: self.loopDuration)
+        debugLog("Next loop at \(self.loopUntil.description)")
+    }
+    
+    func shouldLoopVideo() -> Bool {
+        let toCompare = NSDate()
+        debugLog("Comparing \(toCompare.description) to current deadline \(self.loopUntil.description)")
+        return NSDate().timeIntervalSince1970 <= self.loopUntil.timeIntervalSince1970
+    }
     
     // MARK: - playNextVideo()
     // swiftlint:disable:next cyclomatic_complexity
@@ -890,6 +903,7 @@ final class AerialView: ScreenSaverView, CAAnimationDelegate {
                 }
             }
         }
+        setLoopDeadline()
     }
 
     // Is the current screen vertical?

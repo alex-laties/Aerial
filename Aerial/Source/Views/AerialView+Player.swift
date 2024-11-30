@@ -117,7 +117,7 @@ extension AerialView {
         debugLog("\(self.description) played did reach end")
         debugLog("\(self.description) notification: \(aNotification)")
 
-        if shouldLoop {
+        if shouldLoop || shouldLoopVideo() {
             debugLog("Rewinding video!")
             if let playerItem = aNotification.object as? AVPlayerItem {
                 playerItem.seek(to: CMTime.zero, completionHandler: nil)
